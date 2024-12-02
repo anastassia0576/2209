@@ -101,4 +101,38 @@ for feature in geojson_data["features"]:
         location=[coords[1], coords[0]],
         popup=popup_content,
         tooltip=name,
- 
+        icon=folium.Icon(color="blue", icon="info-sign"),
+    )
+    marker_cluster.add_child(marker)
+
+# Добавляем кластер маркеров на карту
+m.add_child(marker_cluster)
+
+# Добавляем слой GeoJSON с возможностью поиска
+geojson_layer = folium.GeoJson(
+    geojson_data,
+    name="GeoJSON Data",
+    popup=folium.GeoJsonPopup(fields=["name"]),
+    tooltip=folium.GeoJsonTooltip(fields=["name"], aliases=["Name:"]),
+)
+m.add_child(geojson_layer)
+
+# Добавляем компонент поиска
+search = Search(
+    layer=geojson_layer,
+    geom_type="Point",
+    placeholder="Найти объект на карте",
+    search_label="name",
+    collapsed=False,
+).add_to(m)
+
+# Добавляем управление слоями
+folium.LayerControl().add_to(m)
+
+# Сохранение карты в объект BytesIO
+map_html = BytesIO()
+m.save(map_html, close_file=False)  # Указываем close_file=False, чтобы не закрыть поток сразу
+map_html.seek(0)
+
+# Отображаем карту в Streamlit
+st.components.v1.html(map_html.getvalue().decode(), height=600) 
