@@ -131,7 +131,7 @@ folium.LayerControl().add_to(m)
 
 # Сохранение карты в объект BytesIO
 map_html = BytesIO()
-m.save(map_html)
+m.save(map_html, close_file=False)  # Указываем close_file=False, чтобы не закрыть поток сразу
 map_html.seek(0)
 
 # Отображаем карту в Streamlit
